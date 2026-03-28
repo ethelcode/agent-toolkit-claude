@@ -1,0 +1,31 @@
+{
+  "_description": "기본 프로젝트 settings.json 템플릿. .claude/settings.json으로 복사하여 사용.",
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(yarn *)",
+      "Bash(pnpm *)",
+      "Bash(pip *)",
+      "Bash(python *)",
+      "Bash(go *)",
+      "Bash(cargo *)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git branch*)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(which *)",
+      "Bash(echo *)",
+      "Read",
+      "Glob",
+      "Grep"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)"
+    ]
+  }
+}

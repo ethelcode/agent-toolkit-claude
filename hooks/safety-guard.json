@@ -1,0 +1,23 @@
+{
+  "_description": "위험한 명령 실행을 차단하는 hooks. .claude/settings.json의 hooks 섹션에 병합하여 사용.",
+  "PreToolUse": [
+    {
+      "matcher": "Bash",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "CMD=$(jq -r '.tool_input.command // empty'); case \"$CMD\" in *rm\\ -rf*) echo '재귀적 삭제 명령이 차단되었습니다.' >&2; exit 2 ;; *git\\ push\\ --force*|*git\\ push\\ -f\\ *) echo 'force push가 차단되었습니다. 정말 필요하면 수동으로 실행하세요.' >&2; exit 2 ;; *git\\ reset\\ --hard*) echo 'git reset --hard가 차단되었습니다.' >&2; exit 2 ;; esac"
+        }
+      ]
+    },
+    {
+      "matcher": "Edit|Write",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "FILE=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); case \"$FILE\" in *.env|*.env.*) echo '.env 파일 수정이 차단되었습니다. 환경변수는 수동으로 관리하세요.' >&2; exit 2 ;; esac"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "_description": "hooks가 포함된 settings.json 템플릿. 프로젝트에 맞게 수정하여 사용.",
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(npx *)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Read",
+      "Glob",
+      "Grep"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(git push --force*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "CMD=$(jq -r '.tool_input.command // empty'); case \"$CMD\" in *rm\\ -rf*) echo '재귀적 삭제 차단' >&2; exit 2 ;; esac"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(jq -r '.tool_input.file_path // .tool_input.filePath // empty'); case \"$FILE\" in *.env|*.env.*) echo '.env 파일 수정 차단' >&2; exit 2 ;; esac"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_input.filePath // empty' | head -1 | xargs -I{} sh -c 'test -n \"{}\" && npx prettier --write \"{}\" 2>/dev/null || true'",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}

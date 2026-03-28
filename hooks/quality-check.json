@@ -1,0 +1,15 @@
+{
+  "_description": "코드 변경 후 린트 체크를 실행하는 hooks. 프로젝트의 린터에 맞게 수정하여 사용.",
+  "PostToolUse": [
+    {
+      "matcher": "Edit|Write",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "jq -r '.tool_input.file_path // .tool_input.filePath // empty' | head -1 | xargs -I{} sh -c 'FILE=\"{}\"; case \"$FILE\" in *.js|*.ts|*.jsx|*.tsx) npx eslint --fix \"$FILE\" 2>/dev/null ;; *.py) python -m ruff check --fix \"$FILE\" 2>/dev/null ;; esac'",
+          "timeout": 15000
+        }
+      ]
+    }
+  ]
+}

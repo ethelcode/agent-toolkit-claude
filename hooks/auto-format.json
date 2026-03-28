@@ -1,0 +1,22 @@
+{
+  "_description": "파일 수정 후 자동 포맷팅 hooks. 프로젝트의 포맷터에 맞게 command를 수정하여 사용.",
+  "_variants": {
+    "prettier": "npx prettier --write",
+    "black": "python -m black",
+    "gofmt": "gofmt -w",
+    "rustfmt": "rustfmt",
+    "swift-format": "swift-format format -i"
+  },
+  "PostToolUse": [
+    {
+      "matcher": "Edit|Write",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "jq -r '.tool_input.file_path // .tool_input.filePath // empty' | head -1 | xargs -I{} sh -c 'FILE=\"{}\"; case \"$FILE\" in *.js|*.ts|*.jsx|*.tsx|*.json|*.css|*.md) npx prettier --write \"$FILE\" 2>/dev/null ;; *.py) python -m black \"$FILE\" 2>/dev/null ;; *.go) gofmt -w \"$FILE\" 2>/dev/null ;; esac'",
+          "timeout": 10000
+        }
+      ]
+    }
+  ]
+}
